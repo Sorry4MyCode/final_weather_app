@@ -1,12 +1,10 @@
 from enum import Enum
 
 class ForecastMode(str, Enum):
-    CURRENT = "current"
-    PAST = "past"
-    FORECAST = "forecast"
+    CURRENT = ("current", ["current"])
+    PAST = ("past", ["daily", "hourly"])
+    FORECAST = ("forecast", ["daily", "hourly"])
 
-    @classmethod
-    def get_time_unit(cls, mode: "ForecastMode") -> str:
-        '''
-        return default time unit for mode
-        '''
+    def __init__(self, mode, time_interval):
+        self.mode = mode
+        self.time_interval = time_interval

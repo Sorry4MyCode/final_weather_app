@@ -12,17 +12,28 @@ class WeatherService:
 
         return self.weather_client.get_weather(coordinates, mode)
 
-    def _build_parameter(self, coordinates: Coordinates, mode: ForecastMode, time: int) -> dict:
-        parameter = {
+    def _build_parameter(self, coordinates: Coordinates, mode: ForecastMode, time_interval: str, time: int) -> dict:
+        if time_interval not in mode.time_interval:
+            raise ValueError(f"Invalid time interval for {mode}. Please choose from {mode.time_interval}")
+
+        params = {
             "latitude": coordinates.latitude,
             "longitude": coordinates.longitude,
             "timezone": "auto"
         }
 
-        if mode == ForecastMode.CURRENT:
-            parameter["current"] = "temperature_2m"
-            return parameter
-        elif mode == ForecastMode.PAST:
-            parameter["forecast_days"] = 1
-            parameter["past_days"] = time
-        else
+        if time_interval == "current":
+            params["current"] = "temperature_2m"
+            return params
+        elif time_interval == "daily":
+            params["daily"] = ["temperature_2m_max", "temperature_2m_min"]
+        else: #hourly
+            params["hourly"] = "temperature_2m"
+
+        if mode is ForecastMode.FORECAST:
+            params["forecast"] = time
+        else: #past
+            params["forecast_days"] = 1
+            params["past_days"] = time
+
+        return params
