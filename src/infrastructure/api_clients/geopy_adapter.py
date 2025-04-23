@@ -16,6 +16,4 @@ class GeoLocationClient:
         address = ", ".join(address_parts)
         response = self.geo_client.geocode(address)
 
-        if response is None:
-            raise ValueError(f"Location not found. Please verify the details:\n{address}")
         return Coordinates(latitude=response.latitude, longitude=response.longitude)
