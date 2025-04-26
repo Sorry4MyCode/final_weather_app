@@ -8,4 +8,4 @@ class OpenMeteoClient:
         self.client = openmeteo_requests.Client(session=cache.retry_session)
 
     def get_weather(self, url, params: dict):
-        return self.client.weather_api(url, params)
+        return self.client.weather_api(url, params)[0]
