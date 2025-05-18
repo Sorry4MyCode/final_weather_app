@@ -1,15 +1,17 @@
 # noinspection PyUnresolvedReferences
 from geopy.geocoders import Nominatim
 
+from config.logging_config import debug_log
+from src.config.settings import agent_name
 from src.domain.models.location import Coordinates, Location
 
 
 class GeoLocationClient:
     def __init__(self):
-        self.geo_client = Nominatim(user_agent="your_app_name")
+        self.geo_client = Nominatim(user_agent=agent_name)
 
+    @debug_log
     def get_coordinates(self, location: Location) -> Coordinates:
-        # Build address in conventional format
         address_parts = [
             location.city,
             location.postal_code,

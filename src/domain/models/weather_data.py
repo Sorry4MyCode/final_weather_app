@@ -42,6 +42,9 @@ class WeatherData:
     visibility_min: float | None = None
 
     cloud_cover: float | None = None
+    cloud_cover_high: float | None = None
+    cloud_cover_mid: float | None = None
+    cloud_cover_low: float | None = None
     cloud_cover_mean: float | None = None
     cloud_cover_max: float | None = None
     cloud_cover_min: float | None = None
