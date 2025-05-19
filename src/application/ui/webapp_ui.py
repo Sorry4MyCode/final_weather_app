@@ -229,27 +229,6 @@ class WebappUI:
                 st.metric("Fastest Wind Speed", f"{df['wind_speed_10m_max'].max():.1f} km/h")
                 st.metric("Fastest Wind Gusts", f"{df['wind_gust_10m_max'].max():.1f} km/h")
 
-        with st.expander(label="Temperature :thermometer:", expanded=True):
-            cols = st.columns(3)
-            with cols[0]:
-                st.metric("Lowest Temperature :snowflake:", f"{df['temperature_2m'].min():.1f}°C")
-            with cols[1]:
-                st.metric("Average Temperature :dart:", f"{df['temperature_2m'].mean():.1f}°C")
-            with cols[2]:
-                st.metric("Max Temperature :fire:", f"{df['temperature_2m'].max():.1f}°C")
-
-        with st.expander(label="Wind :wind_blowing_face:", expanded=True):
-            cols = st.columns(3)
-            with cols[0]:
-                st.metric("Slowest Wind Speed", f"{df['wind_speed_10m'].min():.1f} km/h")
-                st.metric("Slowest Wind Gusts", f"{df['wind_gust_10m'].min():.1f} km/h")
-            with cols[1]:
-                st.metric("Average Wind Speed", f"{df['wind_speed_10m'].mean():.1f} km/h")
-                st.metric("Average Wind Gusts", f"{df['wind_gust_10m'].mean():.1f} km/h")
-            with cols[2]:
-                st.metric("Fastest Wind Speed", f"{df['wind_speed_10m'].max():.1f} km/h")
-                st.metric("Fastest Wind Gusts", f"{df['wind_gust_10m'].max():.1f} km/h")
-
     @debug_log
     def _display_hourly_summary(self):
         df = st.session_state.df
@@ -273,6 +252,27 @@ class WebappUI:
                 emoji = config.settings.wind_shortcodes.get(wind_abbreviation, ":question:")
                 st.metric(f"Wind direction: {emoji}", f"{wind_abbreviation}")
                 st.metric("Wind gusts :tornado:", f"{current_value['wind_gust_10m']:.1f} km/h")
+
+        with st.expander(label="Temperature :thermometer:", expanded=True):
+            cols = st.columns(3)
+            with cols[0]:
+                st.metric("Lowest Temperature :snowflake:", f"{df['temperature_2m'].min():.1f}°C")
+            with cols[1]:
+                st.metric("Average Temperature :dart:", f"{df['temperature_2m'].mean():.1f}°C")
+            with cols[2]:
+                st.metric("Max Temperature :fire:", f"{df['temperature_2m'].max():.1f}°C")
+
+        with st.expander(label="Wind :wind_blowing_face:", expanded=True):
+            cols = st.columns(3)
+            with cols[0]:
+                st.metric("Slowest Wind Speed", f"{df['wind_speed_10m'].min():.1f} km/h")
+                st.metric("Slowest Wind Gusts", f"{df['wind_gust_10m'].min():.1f} km/h")
+            with cols[1]:
+                st.metric("Average Wind Speed", f"{df['wind_speed_10m'].mean():.1f} km/h")
+                st.metric("Average Wind Gusts", f"{df['wind_gust_10m'].mean():.1f} km/h")
+            with cols[2]:
+                st.metric("Fastest Wind Speed", f"{df['wind_speed_10m'].max():.1f} km/h")
+                st.metric("Fastest Wind Gusts", f"{df['wind_gust_10m'].max():.1f} km/h")
 
     @debug_log
     def _display_details(self):
