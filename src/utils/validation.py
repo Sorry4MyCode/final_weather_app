@@ -1,5 +1,5 @@
 from config.logging_config import debug_log
-from src.domain.models.location import Location
+from domain.models.location import Location
 
 
 class Validation:

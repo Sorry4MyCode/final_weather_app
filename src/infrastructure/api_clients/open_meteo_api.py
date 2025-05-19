@@ -1,7 +1,7 @@
 import openmeteo_requests
 
 from config.logging_config import debug_log
-from src.domain.models.cache_strategy import CacheStrategy
+from domain.models.cache_strategy import CacheStrategy
 
 
 class OpenMeteoClient:

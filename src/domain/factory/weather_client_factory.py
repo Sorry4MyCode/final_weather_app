@@ -1,7 +1,7 @@
 from config.logging_config import debug_log
-from src.domain.interface.weather_client_interface import WeatherClientInterface
-from src.domain.models.cache_strategy import CacheStrategy
-from src.domain.services.open_meteo_service import OpenMeteoService
+from domain.interface.weather_client_interface import WeatherClientInterface
+from domain.models.cache_strategy import CacheStrategy
+from domain.services.open_meteo_service import OpenMeteoService
 
 
 class WeatherClientFactory:

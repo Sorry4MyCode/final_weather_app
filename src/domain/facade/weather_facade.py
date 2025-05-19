@@ -1,9 +1,9 @@
 from pandas import DataFrame
 
-from src.domain.factory.weather_client_factory import WeatherClientFactory
-from src.domain.models.cache_strategy import CacheStrategy
-from src.infrastructure.api_clients.geopy_api import *
-from src.utils.validation import Validation
+from domain.factory.weather_client_factory import WeatherClientFactory
+from domain.models.cache_strategy import CacheStrategy
+from infrastructure.api_clients.geopy_api import *
+from utils.validation import Validation
 
 
 class WeatherFacade:

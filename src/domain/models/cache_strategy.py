@@ -1,7 +1,7 @@
 import requests_cache
 from retry_requests import retry
 
-from src.config.settings import expiration_cache, backoff_factor_cache, retries_cache, cache_name
+from config.settings import expiration_cache, backoff_factor_cache, retries_cache, cache_name
 
 
 class CacheStrategy:

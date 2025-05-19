@@ -6,11 +6,11 @@ from pandas import DataFrame
 
 import config.settings
 from config.logging_config import debug_log
-from src.domain.interface.weather_client_interface import WeatherClientInterface
-from src.domain.models.cache_strategy import CacheStrategy
-from src.domain.models.location import Location
-from src.domain.models.weather_data import WeatherData
-from src.infrastructure.api_clients.open_meteo_api import OpenMeteoClient
+from domain.interface.weather_client_interface import WeatherClientInterface
+from domain.models.cache_strategy import CacheStrategy
+from domain.models.location import Location
+from domain.models.weather_data import WeatherData
+from infrastructure.api_clients.open_meteo_api import OpenMeteoClient
 
 
 class OpenMeteoService(WeatherClientInterface):

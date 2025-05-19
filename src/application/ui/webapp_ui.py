@@ -4,8 +4,8 @@ import streamlit as st
 
 import config.settings
 from config.logging_config import debug_log, setup_logging
-from src.domain.facade.weather_facade import WeatherFacade
-from src.domain.models.location import Location
+from domain.facade.weather_facade import WeatherFacade
+from domain.models.location import Location
 
 
 class WebappUI:
@@ -86,15 +86,16 @@ class WebappUI:
                         duration=duration
                     )
 
-            df = st.session_state.df
-            csv = df.to_csv(index=False).encode("utf-8")
-            st.download_button(
-                label="Download CSV",
-                data=csv,
-                file_name="data.csv",
-                mime="text/csv",
-                icon=":material/download:",
-            )
+            if st.session_state.df is not None:
+                df = st.session_state.df
+                csv = df.to_csv(index=False).encode("utf-8")
+                st.download_button(
+                    label="Download CSV",
+                    data=csv,
+                    file_name="data.csv",
+                    mime="text/csv",
+                    icon=":material/download:",
+                )
 
             self._refresh_data_automatically(duration=duration)
 
@@ -186,7 +187,7 @@ class WebappUI:
             with cols[0]:
                 st.metric("Temperature :thermometer:",
                           f"{current_value['temperature_2m_min']:.1f} - {current_value['temperature_2m_max']:.1f}°C")
-                st.metric("Feels like",
+                st.metric("Feels like :sweat_smile:",
                           f"{current_value['apparent_temperature_min']:.1f} - {current_value['apparent_temperature_max']:.1f}°C")
                 st.metric("Humidity :sweat_drops:",
                           f"{current_value['relative_humidity_min']:.1f} - {current_value['relative_humidity_max']:.1f}%")
@@ -211,7 +212,7 @@ class WebappUI:
             with cols[0]:
                 st.metric("Lowest Temperature :snowflake:", f"{df['temperature_2m_min'].min():.1f}°C")
             with cols[1]:
-                st.metric("Average Temperature", f"{df['temperature_2m_mean'].mean():.1f}°C")
+                st.metric("Average Temperature :dart:", f"{df['temperature_2m_mean'].mean():.1f}°C")
             with cols[2]:
                 st.metric("Max Temperature :fire:", f"{df['temperature_2m_max'].max():.1f}°C")
 
@@ -237,7 +238,7 @@ class WebappUI:
             cols = st.columns(3)
             with cols[0]:
                 st.metric("Temperature :thermometer:", f"{current_value['temperature_2m']:.1f}°C")
-                st.metric("Feels like", f"{current_value['apparent_temperature_2m']:.1f}°C")
+                st.metric("Feels like :sweat_smile:", f"{current_value['apparent_temperature_2m']:.1f}°C")
                 st.metric("Humidity :sweat_drops:", f"{current_value['relative_humidity_2m']:.1f}%")
             with cols[1]:
                 emoji = config.settings.weather_emojis.get(current_value['weather_code'], ":question:")
@@ -256,7 +257,7 @@ class WebappUI:
             with cols[0]:
                 st.metric("Lowest Temperature :snowflake:", f"{df['temperature_2m'].min():.1f}°C")
             with cols[1]:
-                st.metric("Average Temperature", f"{df['temperature_2m'].mean():.1f}°C")
+                st.metric("Average Temperature :dart:", f"{df['temperature_2m'].mean():.1f}°C")
             with cols[2]:
                 st.metric("Max Temperature :fire:", f"{df['temperature_2m'].max():.1f}°C")
 
@@ -377,21 +378,22 @@ class WebappUI:
     def _plot_data(self, df, tabs, plots):
         for spec in plots:
             with tabs[spec['tab']]:
-                st.header(spec['title'])
-                kind = spec.get('kind', 'line')
-                fig = (
-                    px.bar(df, x='timestamp', y=spec['cols'], title=spec['title'], labels={'value': spec['y_label']})
-                    if kind == 'bar'
-                    else px.line(df, x='timestamp', y=spec['cols'], title=spec['title'],
-                                 labels={'value': spec['y_label']})
-                )
-                fig.update_layout(
-                    hovermode='x unified',
-                    legend_title=None,
-                    margin=dict(t=40, r=20, l=20, b=20)
-                )
-                fig.update_xaxes(rangeslider_visible=True)
-                st.plotly_chart(fig, use_container_width=True)
+                with st.expander(label=spec['title'], expanded=True):
+                    st.header(spec['title'])
+                    kind = spec.get('kind', 'line')
+                    fig = (
+                        px.bar(df, x='timestamp', y=spec['cols'], title=spec['title'], labels={'value': spec['y_label']})
+                        if kind == 'bar'
+                        else px.line(df, x='timestamp', y=spec['cols'], title=spec['title'],
+                                     labels={'value': spec['y_label']})
+                    )
+                    fig.update_layout(
+                        hovermode='x unified',
+                        legend_title=None,
+                        margin=dict(t=40, r=20, l=20, b=20)
+                    )
+                    fig.update_xaxes(rangeslider_visible=True)
+                    st.plotly_chart(fig, use_container_width=True)
 
 
 if __name__ == "__main__":

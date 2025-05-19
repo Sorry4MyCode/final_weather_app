@@ -2,7 +2,7 @@ from abc import abstractmethod, ABC
 
 from pandas import DataFrame
 
-from src.domain.models.location import Location
+from domain.models.location import Location
 
 
 class WeatherClientInterface(ABC):

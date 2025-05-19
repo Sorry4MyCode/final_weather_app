@@ -2,8 +2,8 @@
 from geopy.geocoders import Nominatim
 
 from config.logging_config import debug_log
-from src.config.settings import agent_name
-from src.domain.models.location import Coordinates, Location
+from config.settings import agent_name
+from domain.models.location import Coordinates, Location
 
 
 class GeoLocationClient:
