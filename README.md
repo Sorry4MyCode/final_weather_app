@@ -1,0 +1,1 @@
+Dieses Readme ist anders als das Readme auf Github. Die Dokus befinden sich in /docs/general. Unter /docs/logging habe ich außerdem einen Beispiel-Log hinzugefügt. Diese dienen nur zu Veranschauungszwecken.
