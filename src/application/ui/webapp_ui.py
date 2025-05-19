@@ -9,6 +9,11 @@ from domain.models.location import Location
 
 
 class WebappUI:
+
+    """
+    Initialization of basic parameters and UI
+    """
+
     def __init__(self):
         setup_logging()
         self.facade = WeatherFacade(api_name="open-meteo")
@@ -25,30 +30,10 @@ class WebappUI:
 
     @debug_log
     def render_ui(self) -> None:
-        st.header("Weather App by J.Fiedler / Sorry4MyCode", divider="rainbow")
+        st.header("Weather App by J. Fiedler / Sorry4MyCode", divider="rainbow")
         self._sidebar()
         self._page_controls()
         self._current_page()
-
-    @debug_log
-    def _page_controls(self):
-        col1, col2 = st.columns(2)
-        with col1:
-            if st.button("📊 Summary View", use_container_width=True):
-                st.session_state.current_page = "summary"
-        with col2:
-            if st.button("📈 Detailed Analysis", use_container_width=True):
-                st.session_state.current_page = "details"
-
-    @debug_log
-    def _current_page(self) -> None:
-        if st.session_state.df is not None and st.session_state.location:
-            if st.session_state.current_page == "summary":
-                self._display_summary()
-            else:
-                self._display_details()
-        else:
-            st.info("Click 'Go' in the sidebar to fetch weather data")
 
     @debug_log
     def _sidebar(self) -> None:
@@ -100,6 +85,26 @@ class WebappUI:
             self._refresh_data_automatically(duration=duration)
 
     @debug_log
+    def _page_controls(self):
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("Summary View :bar_chart:", use_container_width=True):
+                st.session_state.current_page = "summary"
+        with col2:
+            if st.button("Detailed Analysis :chart_with_upwards_trend:", use_container_width=True):
+                st.session_state.current_page = "details"
+
+    @debug_log
+    def _current_page(self) -> None:
+        if st.session_state.df is not None and st.session_state.location:
+            if st.session_state.current_page == "summary":
+                self._display_summary()
+            else:
+                self._display_details()
+        else:
+            st.info("Click 'Go' in the sidebar to fetch weather data")
+
+    @debug_log
     def _refresh_data_automatically(self, duration) -> None:
         """
         this entire section is just to automatically refetch the data when time_interval or duration
@@ -126,9 +131,9 @@ class WebappUI:
                         duration=current_duration,
                     )
 
-    @debug_log
-    def _get_location(self, country, postal_code, city):
-        return Location(country=country, postal_code=postal_code, city=city)
+    """
+    Input processing and fetch logic
+    """
 
     @debug_log
     def _validate_input(self, country, postal_code, city) -> bool:
@@ -139,6 +144,10 @@ class WebappUI:
             st.error("Please enter at least a postal code or city.")
             return False
         return True
+
+    @debug_log
+    def _get_location(self, country, postal_code, city):
+        return Location(country=country, postal_code=postal_code, city=city)
 
     @debug_log
     def _fetch_weather(self, location, time_interval, duration) -> None:
@@ -169,19 +178,11 @@ class WebappUI:
             self._display_hourly_summary()
 
     @debug_log
-    def _display_details(self):
-        st.subheader("Detailed Analysis")
-        if st.session_state.time_interval == "Days":
-            self._display_daily_details()
-        else:
-            self._display_hourly_details()
-
-    @debug_log
     def _display_daily_summary(self):
         df = st.session_state.df
         # st.dataframe(df, use_container_width=True)
 
-        with st.expander("Todays Weather :rainbow:", expanded=True):
+        with st.expander("Today's Weather :rainbow:", expanded=True):
             current_value = self._get_current(df=df)
             cols = st.columns(3)
             with cols[0]:
@@ -228,6 +229,27 @@ class WebappUI:
                 st.metric("Fastest Wind Speed", f"{df['wind_speed_10m_max'].max():.1f} km/h")
                 st.metric("Fastest Wind Gusts", f"{df['wind_gust_10m_max'].max():.1f} km/h")
 
+        with st.expander(label="Temperature :thermometer:", expanded=True):
+            cols = st.columns(3)
+            with cols[0]:
+                st.metric("Lowest Temperature :snowflake:", f"{df['temperature_2m'].min():.1f}°C")
+            with cols[1]:
+                st.metric("Average Temperature :dart:", f"{df['temperature_2m'].mean():.1f}°C")
+            with cols[2]:
+                st.metric("Max Temperature :fire:", f"{df['temperature_2m'].max():.1f}°C")
+
+        with st.expander(label="Wind :wind_blowing_face:", expanded=True):
+            cols = st.columns(3)
+            with cols[0]:
+                st.metric("Slowest Wind Speed", f"{df['wind_speed_10m'].min():.1f} km/h")
+                st.metric("Slowest Wind Gusts", f"{df['wind_gust_10m'].min():.1f} km/h")
+            with cols[1]:
+                st.metric("Average Wind Speed", f"{df['wind_speed_10m'].mean():.1f} km/h")
+                st.metric("Average Wind Gusts", f"{df['wind_gust_10m'].mean():.1f} km/h")
+            with cols[2]:
+                st.metric("Fastest Wind Speed", f"{df['wind_speed_10m'].max():.1f} km/h")
+                st.metric("Fastest Wind Gusts", f"{df['wind_gust_10m'].max():.1f} km/h")
+
     @debug_log
     def _display_hourly_summary(self):
         df = st.session_state.df
@@ -252,70 +274,13 @@ class WebappUI:
                 st.metric(f"Wind direction: {emoji}", f"{wind_abbreviation}")
                 st.metric("Wind gusts :tornado:", f"{current_value['wind_gust_10m']:.1f} km/h")
 
-        with st.expander(label="Temperature :thermometer:", expanded=True):
-            cols = st.columns(3)
-            with cols[0]:
-                st.metric("Lowest Temperature :snowflake:", f"{df['temperature_2m'].min():.1f}°C")
-            with cols[1]:
-                st.metric("Average Temperature :dart:", f"{df['temperature_2m'].mean():.1f}°C")
-            with cols[2]:
-                st.metric("Max Temperature :fire:", f"{df['temperature_2m'].max():.1f}°C")
-
-        with st.expander(label="Wind :wind_blowing_face:", expanded=True):
-            cols = st.columns(3)
-            with cols[0]:
-                st.metric("Slowest Wind Speed", f"{df['wind_speed_10m'].min():.1f} km/h")
-                st.metric("Slowest Wind Gusts", f"{df['wind_gust_10m'].min():.1f} km/h")
-            with cols[1]:
-                st.metric("Average Wind Speed", f"{df['wind_speed_10m'].mean():.1f} km/h")
-                st.metric("Average Wind Gusts", f"{df['wind_gust_10m'].mean():.1f} km/h")
-            with cols[2]:
-                st.metric("Fastest Wind Speed", f"{df['wind_speed_10m'].max():.1f} km/h")
-                st.metric("Fastest Wind Gusts", f"{df['wind_gust_10m'].max():.1f} km/h")
-
     @debug_log
-    def _get_wind_direction(self, degree):
-        directions = [
-            "N", "NNE", "NE", "ENE",
-            "E", "ESE", "SE", "SSE",
-            "S", "SSW", "SW", "WSW",
-            "W", "WNW", "NW", "NNW"
-        ]
-        normalized_degree = degree % 360
-        index = int((normalized_degree + 11.25) / 22.5) % 16
-        return directions[index]
-
-    @debug_log
-    def _get_current(self, df):
-        # Work on a copy and ensure timestamps are parsed
-        df = df.copy()
-        df["timestamp"] = pd.to_datetime(df["timestamp"])  # Result looks the same, modern Python uses types
-        timestamps = df["timestamp"]
-
-        # Keep timezone if present
-        now = pd.Timestamp.now(tz=timestamps.dt.tz)
-
-        # Daily
-        if timestamps.dt.hour.nunique() == 1:
-            today = now.normalize()
-            is_today = timestamps.dt.normalize() == today
-            if is_today.any():
-                # If today is found, use today
-                return df.loc[is_today].iloc[0]
-            else:
-                # Fallback, just take the last available day if you can not find today
-                past = df[timestamps <= now]
-                if not past.empty:
-                    return past.iloc[-1]
-                '''
-                Before the front-end crashes just return the first row of the dataset.
-                This should never be executed as long as the backend is not faulty
-                '''
-                return df.iloc[0]
-        else:  # Hourly
-            df["time_diff"] = (timestamps - now).abs()
-            best_idx = df["time_diff"].idxmin()
-            return df.loc[best_idx]
+    def _display_details(self):
+        st.subheader("Detailed Analysis")
+        if st.session_state.time_interval == "Days":
+            self._display_daily_details()
+        else:
+            self._display_hourly_details()
 
     @debug_log
     def _display_daily_details(self):
@@ -375,6 +340,50 @@ class WebappUI:
         self._plot_data(df, tabs, plots)
 
     @debug_log
+    def _get_current(self, df):
+        # Work on a copy and ensure timestamps are parsed
+        df = df.copy()
+        df["timestamp"] = pd.to_datetime(df["timestamp"])  # Result looks the same, modern Python uses types
+        timestamps = df["timestamp"]
+
+        # Keep timezone if present
+        now = pd.Timestamp.now(tz=timestamps.dt.tz)
+
+        # Daily
+        if timestamps.dt.hour.nunique() == 1:
+            today = now.normalize()
+            is_today = timestamps.dt.normalize() == today
+            if is_today.any():
+                # If today is found, use today
+                return df.loc[is_today].iloc[0]
+            else:
+                # Fallback, just take the last available day if you can not find today
+                past = df[timestamps <= now]
+                if not past.empty:
+                    return past.iloc[-1]
+                '''
+                Before the front-end crashes just return the first row of the dataset.
+                This should never be executed as long as the backend is not faulty
+                '''
+                return df.iloc[0]
+        else:  # Hourly
+            df["time_diff"] = (timestamps - now).abs()
+            best_idx = df["time_diff"].idxmin()
+            return df.loc[best_idx]
+
+    @debug_log
+    def _get_wind_direction(self, degree):
+        directions = [
+            "N", "NNE", "NE", "ENE",
+            "E", "ESE", "SE", "SSE",
+            "S", "SSW", "SW", "WSW",
+            "W", "WNW", "NW", "NNW"
+        ]
+        normalized_degree = degree % 360
+        index = int((normalized_degree + 11.25) / 22.5) % 16
+        return directions[index]
+
+    @debug_log
     def _plot_data(self, df, tabs, plots):
         for spec in plots:
             with tabs[spec['tab']]:
@@ -382,7 +391,8 @@ class WebappUI:
                     st.header(spec['title'])
                     kind = spec.get('kind', 'line')
                     fig = (
-                        px.bar(df, x='timestamp', y=spec['cols'], title=spec['title'], labels={'value': spec['y_label']})
+                        px.bar(df, x='timestamp', y=spec['cols'], title=spec['title'],
+                               labels={'value': spec['y_label']})
                         if kind == 'bar'
                         else px.line(df, x='timestamp', y=spec['cols'], title=spec['title'],
                                      labels={'value': spec['y_label']})

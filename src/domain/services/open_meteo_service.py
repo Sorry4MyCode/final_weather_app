@@ -33,7 +33,7 @@ class OpenMeteoService(WeatherClientInterface):
             "past_days": abs(duration[0])
         }
 
-        # TODO fix forecast/past days
+        #TODO take a special look at durations and edge cases
 
         if time_interval == "days":
             params["daily"] = config.settings.daily_params
